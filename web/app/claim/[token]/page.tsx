@@ -24,6 +24,18 @@ export default function Claim() {
   const [dest, setDest] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState("");
+  const [showPass, setShowPass] = useState(false);
+
+  const isValidDest = (() => {
+    const t = dest.trim();
+    if (!t) return null;
+    try {
+      new PublicKey(t);
+      return true;
+    } catch {
+      return false;
+    }
+  })();
 
   useEffect(() => {
     fetch(`/api/claim-bundle?token=${encodeURIComponent(token)}`)
@@ -89,10 +101,30 @@ export default function Claim() {
           {b.status === "claimable" && !done && (
             <section className="card">
               <h3>Claim in two steps</h3>
-              <label className="field"><span>1 · The passphrase {b.ownerName} gave you</span><input type="password" autoComplete="off" value={pass} onChange={(e) => setPass(e.target.value)} /></label>
-              <label className="field"><span>2 · A Solana address to receive the funds</span><input value={dest} onChange={(e) => setDest(e.target.value)} /></label>
+              <label className="field">
+                <span style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span>1 · The passphrase {b.ownerName} gave you</span>
+                  <button type="button" style={{ background: "none", border: "none", color: "var(--lime)", cursor: "pointer", fontSize: "0.78rem", padding: 0 }} onClick={() => setShowPass(!showPass)}>
+                    {showPass ? "Hide" : "Show"}
+                  </button>
+                </span>
+                <input type={showPass ? "text" : "password"} autoComplete="off" value={pass} onChange={(e) => setPass(e.target.value)} placeholder="Enter the 12+ char passphrase" />
+              </label>
+              <label className="field">
+                <span style={{ display: "flex", justifyContent: "space-between" }}>
+                  <span>2 · A Solana address to receive the funds</span>
+                  {isValidDest === true && <span style={{ color: "var(--mint)", fontSize: "0.78rem" }}>✓ Valid Solana address</span>}
+                  {isValidDest === false && <span style={{ color: "var(--coral)", fontSize: "0.78rem" }}>✗ Invalid address</span>}
+                </span>
+                <input
+                  value={dest}
+                  onChange={(e) => setDest(e.target.value)}
+                  placeholder="Paste any Solana address"
+                  style={{ borderColor: isValidDest === true ? "var(--mint)" : isValidDest === false ? "var(--coral)" : undefined }}
+                />
+              </label>
               <p className="muted small">You do not need any SOL to claim, and you do not connect a wallet. Paste an address you control, for example one from Solflare or Phantom. For a brand-new address, the SOL share must be at least about 0.001 SOL.</p>
-              <button className="btn" disabled={busy || !pass || !dest} onClick={claim}>{busy ? "Claiming..." : "Claim my share"}</button>
+              <button className="btn" disabled={busy || !pass || isValidDest !== true} onClick={claim}>{busy ? "Claiming..." : "Claim my share"}</button>
             </section>
           )}
 

@@ -103,6 +103,7 @@ input:focus-visible,select:focus-visible,.btn:focus-visible{outline:2px solid va
 .timeline li.done{color:var(--muted)} .timeline li.done::before,.timeline li.now::before{background:var(--c)}
 .timeline li.done .dot{background:var(--muted)}
 .timeline li.now{color:var(--c);font-weight:700} .timeline li.now .dot{background:var(--c);box-shadow:0 0 14px var(--c)}
+@media (max-width:540px){.timeline li{font-size:.68rem;letter-spacing:.02em;padding-top:20px}}
 
 /* claim */
 .claimhero{text-align:center;padding:40px 0 10px}

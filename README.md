@@ -4,7 +4,7 @@
 
 > **Devnet demo. Unaudited. Never use real funds.**
 
-- **Live app:** `<YOUR-VERCEL-URL>`
+- **Live app:** [https://web-eta-seven-y6r4siobrz.vercel.app](https://web-eta-seven-y6r4siobrz.vercel.app/)
 - **Demo video:** `<YOUR-VIDEO-URL>`
 - **Program (devnet):** [`DnuvWPjfZhLE3mtFkM9frcpmhAYnfhnfarJTTvj6wDeD`](https://explorer.solana.com/address/DnuvWPjfZhLE3mtFkM9frcpmhAYnfhnfarJTTvj6wDeD?cluster=devnet)
 

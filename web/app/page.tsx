@@ -28,6 +28,21 @@ const LABEL: Record<string, string> = {
 };
 const ZERO = BigInt(0);
 
+const WORDS = [
+  "amber", "anchor", "beacon", "breeze", "cedar", "cipher", "cobalt", "coral",
+  "crystal", "dawn", "echo", "falcon", "fossil", "glacier", "harbor", "haven",
+  "island", "jasper", "kinetic", "lagoon", "lantern", "lunar", "meadow", "mosaic",
+  "nebula", "oasis", "orbit", "prism", "quartz", "radius", "ripple", "sable",
+  "shadow", "silver", "solace", "summit", "timber", "trail", "valley", "velvet"
+];
+function generatePassphrase(): string {
+  const chosen: string[] = [];
+  const bytes = new Uint8Array(4);
+  crypto.getRandomValues(bytes);
+  for (let i = 0; i < 4; i++) chosen.push(WORDS[bytes[i] % WORDS.length]);
+  return chosen.join("-");
+}
+
 export default function Owner() {
   const { program, wallet, connection } = useProgram();
   const { sendTransaction, signMessage } = useWallet();
@@ -46,6 +61,8 @@ export default function Owner() {
   const [loaded, setLoaded] = useState(false);
   const [f, setF] = useState({ ownerName: "", ownerEmail: "", unit: "days" as Unit, interval: "30", grace: "14", gKey: "", gEmail: "", gTimeout: "14" });
   const [bens, setBens] = useState<Ben[]>([{ ...emptyBen(), pct: "100" }]);
+  const [showPass, setShowPass] = useState<Record<number, boolean>>({});
+  const [copied, setCopied] = useState<Record<number, boolean>>({});
   const pk = wallet?.publicKey;
   const pkStr = pk?.toBase58();
   const pendingKey = `kinlock-pending-${pkStr}`;
@@ -246,7 +263,52 @@ export default function Owner() {
                     <label className="field"><span>Email</span><input type="email" value={b.email} onChange={(e) => setBen(i, "email", e.target.value)} /></label>
                     <label className="field"><span>Share %</span><input inputMode="decimal" value={b.pct} onChange={(e) => setBen(i, "pct", e.target.value)} /></label>
                   </div>
-                  <label className="field"><span>Passphrase (12+ characters, tell them in person)</span><input type="password" autoComplete="new-password" value={b.pass} onChange={(e) => setBen(i, "pass", e.target.value)} /></label>
+                  <label className="field">
+                    <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span>Passphrase (12+ characters, tell them in person)</span>
+                      <span style={{ display: "flex", gap: "10px" }}>
+                        <button
+                          type="button"
+                          style={{ background: "none", border: "none", color: "var(--lime)", cursor: "pointer", fontSize: "0.78rem", padding: 0 }}
+                          onClick={() => setBen(i, "pass", generatePassphrase())}
+                        >
+                          🎲 Generate
+                        </button>
+                        {b.pass && (
+                          <button
+                            type="button"
+                            style={{ background: "none", border: "none", color: "var(--mint)", cursor: "pointer", fontSize: "0.78rem", padding: 0 }}
+                            onClick={() => {
+                              navigator.clipboard.writeText(b.pass);
+                              setCopied((prev) => ({ ...prev, [i]: true }));
+                              setTimeout(() => setCopied((prev) => ({ ...prev, [i]: false })), 2000);
+                            }}
+                          >
+                            {copied[i] ? "✓ Copied" : "Copy"}
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          style={{ background: "none", border: "none", color: "var(--muted)", cursor: "pointer", fontSize: "0.78rem", padding: 0 }}
+                          onClick={() => setShowPass((prev) => ({ ...prev, [i]: !prev[i] }))}
+                        >
+                          {showPass[i] ? "Hide" : "Show"}
+                        </button>
+                      </span>
+                    </span>
+                    <input
+                      type={showPass[i] ? "text" : "password"}
+                      autoComplete="new-password"
+                      value={b.pass}
+                      placeholder="e.g. glacier-solace-amber-beacon"
+                      onChange={(e) => setBen(i, "pass", e.target.value)}
+                    />
+                    {b.pass && b.pass.length < 12 && (
+                      <span style={{ color: "var(--coral)", fontSize: "0.75rem", display: "block", marginTop: "4px" }}>
+                        Needs at least 12 characters ({b.pass.length}/12)
+                      </span>
+                    )}
+                  </label>
                 </div>
               ))}
               <div className="row-actions">
