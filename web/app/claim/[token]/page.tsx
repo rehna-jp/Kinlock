@@ -50,6 +50,7 @@ export default function Claim() {
         const mint = new PublicKey(b.mint);
         const vaultAta = getAssociatedTokenAddressSync(mint, vaultPk, true);
         const destAta = getAssociatedTokenAddressSync(mint, destination, true);
+        ixs.push(createAssociatedTokenAccountIdempotentInstruction(relayerPk, vaultAta, vaultPk, mint));
         ixs.push(createAssociatedTokenAccountIdempotentInstruction(relayerPk, destAta, destination, mint));
         builder.remainingAccounts([
           { pubkey: vaultAta, isSigner: false, isWritable: true },

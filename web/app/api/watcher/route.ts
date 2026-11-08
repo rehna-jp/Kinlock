@@ -33,19 +33,27 @@ async function run(req: NextRequest) {
       // Stage 1: owner (and guardian) warned once per check-in cycle
       if (Number(row.warned_for) !== v.lastCheckIn) {
         const owner = clean(row.owner_name);
-        await sendMail(
-          row.owner_email,
-          "KinLock: you missed a check-in",
-          `Hi ${owner},\n\nYour KinLock vault has missed its check-in. If you do nothing, your beneficiaries will be notified when the grace period ends.\n\nCheck in now: ${app}\n\nIf this was a mistake or you were away, checking in resets everything.`
-        );
-        out.ownerWarned++;
-        if (row.guardian_email) {
+        try {
           await sendMail(
-            row.guardian_email,
-            `KinLock: ${owner} missed a check-in`,
-            `${owner} named you as guardian of their KinLock vault and has missed a check-in.\n\nTry to reach them first. Only if you believe they are unable to check in, approve release here:\n${app}/guardian/${row.vault}\n\nYou cannot move any funds; approval only lets their beneficiaries claim.`
+            row.owner_email,
+            "KinLock: you missed a check-in",
+            `Hi ${owner},\n\nYour KinLock vault has missed its check-in. If you do nothing, your beneficiaries will be notified when the grace period ends.\n\nCheck in now: ${app}\n\nIf this was a mistake or you were away, checking in resets everything.`
           );
-          out.guardianWarned++;
+          out.ownerWarned++;
+        } catch (e) {
+          out.errors.push(`${row.vault} (owner email): ${(e as Error).message}`);
+        }
+        if (row.guardian_email) {
+          try {
+            await sendMail(
+              row.guardian_email,
+              `KinLock: ${owner} missed a check-in`,
+              `${owner} named you as guardian of their KinLock vault and has missed a check-in.\n\nTry to reach them first. Only if you believe they are unable to check in, approve release here:\n${app}/guardian/${row.vault}\n\nYou cannot move any funds; approval only lets their beneficiaries claim.`
+            );
+            out.guardianWarned++;
+          } catch (e) {
+            out.errors.push(`${row.vault} (guardian email): ${(e as Error).message}`);
+          }
         }
         await db.from("vaults").update({ warned_for: v.lastCheckIn }).eq("vault", row.vault);
       }
@@ -56,13 +64,17 @@ async function run(req: NextRequest) {
           const onChain = v.beneficiaries.find((x) => x.claimKey === b.claim_key);
           if (onChain?.claimed || Number(b.notified_for) === v.lastCheckIn) continue;
           const owner = clean(row.owner_name);
-          await sendMail(
-            b.email,
-            `KinLock: ${owner} named you as a beneficiary`,
-            `Hello ${clean(b.name)},\n\n${owner} set up an KinLock vault naming you as a beneficiary. They have not checked in for longer than their chosen limit, so your share is now available.\n\nClaim it here: ${app}/claim/${b.token}\n\nYou will need the passphrase ${owner} gave you separately. We never see it and cannot recover it.\n\nIf you were not expecting this message, ignore it.`
-          );
-          await db.from("beneficiaries").update({ notified_for: v.lastCheckIn }).eq("token", b.token);
-          out.beneficiariesNotified++;
+          try {
+            await sendMail(
+              b.email,
+              `KinLock: ${owner} named you as a beneficiary`,
+              `Hello ${clean(b.name)},\n\n${owner} set up an KinLock vault naming you as a beneficiary. They have not checked in for longer than their chosen limit, so your share is now available.\n\nClaim it here: ${app}/claim/${b.token}\n\nYou will need the passphrase ${owner} gave you separately. We never see it and cannot recover it.\n\nIf you were not expecting this message, ignore it.`
+            );
+            await db.from("beneficiaries").update({ notified_for: v.lastCheckIn }).eq("token", b.token);
+            out.beneficiariesNotified++;
+          } catch (e) {
+            out.errors.push(`${b.token} (beneficiary email): ${(e as Error).message}`);
+          }
         }
       }
     } catch (e) {

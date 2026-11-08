@@ -36,10 +36,10 @@ export async function POST(req: NextRequest) {
 
     if (!tx.feePayer?.equals(kp.publicKey)) return bad("Invalid fee payer");
     const ixs = tx.instructions;
-    if (ixs.length < 1 || ixs.length > 2) return bad("Unexpected instructions");
+    if (ixs.length < 1 || ixs.length > 3) return bad("Unexpected instructions");
 
-    if (ixs.length === 2) {
-      const a = ixs[0];
+    for (let i = 0; i < ixs.length - 1; i++) {
+      const a = ixs[i];
       if (!a.programId.equals(ASSOCIATED_TOKEN_PROGRAM_ID) || a.data.length !== 1 || a.data[0] !== 1) return bad("Unexpected instruction");
       if (a.keys.length !== 6 || !a.keys[0].pubkey.equals(kp.publicKey) || !a.keys[3].pubkey.equals(mint) || !a.keys[5].pubkey.equals(TOKEN_PROGRAM_ID)) return bad("Unexpected token account setup");
       if (!a.keys[1].pubkey.equals(getAssociatedTokenAddressSync(mint, a.keys[2].pubkey, true))) return bad("Unexpected token account");
@@ -48,7 +48,8 @@ export async function POST(req: NextRequest) {
     const ix = ixs[ixs.length - 1];
     if (!ix.programId.equals(PROGRAM_ID)) return bad("Wrong program");
     if (ix.data.length !== 8 || !ix.data.equals(CLAIM_DISC)) return bad("Not a claim instruction");
-    if (ix.keys.length !== (ixs.length === 2 ? 7 : 4) || !ix.keys[2].pubkey.equals(kp.publicKey)) return bad("Unexpected accounts");
+    if ((ix.keys.length !== 4 && ix.keys.length !== 7) || !ix.keys[2].pubkey.equals(kp.publicKey)) return bad("Unexpected accounts");
+    if (ixs.length > 1 && ix.keys.length !== 7) return bad("Unexpected accounts");
 
     const claimant = ix.keys[1].pubkey;
     const signed = tx.signatures.find((s) => s.publicKey.equals(claimant))?.signature;

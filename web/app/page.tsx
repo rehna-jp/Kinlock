@@ -109,10 +109,19 @@ export default function Owner() {
       return { b, kp, shareBps: shares[i], blob: await encryptSecret(kp.secretKey, b.pass, kp.publicKey.toBase58()) };
     }));
 
-    await program.methods
-      .initializeVault(new BN(interval), new BN(grace), guardian, new BN(gTimeout), useToken ? new PublicKey(TOKEN_MINT) : null, prepared.map((p) => ({ claimKey: p.kp.publicKey, shareBps: p.shareBps })))
-      .accountsPartial({ vault: vaultPda(pk), owner: pk, systemProgram: SystemProgram.programId })
-      .rpc();
+    const m = new PublicKey(TOKEN_MINT);
+    const v = vaultPda(pk);
+    const initIx = await program.methods
+      .initializeVault(new BN(interval), new BN(grace), guardian, new BN(gTimeout), useToken ? m : null, prepared.map((p) => ({ claimKey: p.kp.publicKey, shareBps: p.shareBps })))
+      .accountsPartial({ vault: v, owner: pk, systemProgram: SystemProgram.programId })
+      .instruction();
+
+    const tx = new Transaction().add(initIx);
+    if (useToken) {
+      tx.add(createAssociatedTokenAccountIdempotentInstruction(pk, getAssociatedTokenAddressSync(m, v, true), v, m));
+    }
+    const sig = await sendTransaction(tx, connection);
+    await connection.confirmTransaction(sig, "confirmed");
 
     const json = JSON.stringify({
       ownerName: f.ownerName.trim(), ownerEmail: f.ownerEmail.trim(), guardianEmail: guardian ? f.gEmail.trim() : null,
