@@ -1,0 +1,656 @@
+{
+  "address": "DnuvWPjfZhLE3mtFkM9frcpmhAYnfhnfarJTTvj6wDeD",
+  "metadata": {
+    "name": "kinlock",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "cancel_vault",
+      "discriminator": [
+        150,
+        95,
+        141,
+        252,
+        158,
+        53,
+        60,
+        102
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "check_in",
+      "discriminator": [
+        209,
+        253,
+        4,
+        217,
+        250,
+        241,
+        207,
+        50
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "claim",
+      "discriminator": [
+        62,
+        198,
+        214,
+        193,
+        213,
+        159,
+        108,
+        210
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "writable": true
+        },
+        {
+          "name": "claimant",
+          "signer": true
+        },
+        {
+          "name": "fee_payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "destination",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "guardian_approve",
+      "discriminator": [
+        104,
+        74,
+        23,
+        125,
+        88,
+        180,
+        38,
+        161
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "writable": true
+        },
+        {
+          "name": "guardian",
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_vault",
+      "discriminator": [
+        48,
+        191,
+        163,
+        44,
+        71,
+        129,
+        63,
+        164
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "interval",
+          "type": "i64"
+        },
+        {
+          "name": "grace",
+          "type": "i64"
+        },
+        {
+          "name": "guardian",
+          "type": {
+            "option": "pubkey"
+          }
+        },
+        {
+          "name": "guardian_timeout",
+          "type": "i64"
+        },
+        {
+          "name": "mint",
+          "type": {
+            "option": "pubkey"
+          }
+        },
+        {
+          "name": "beneficiaries",
+          "type": {
+            "vec": {
+              "defined": {
+                "name": "BeneficiaryInput"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "owner_withdraw",
+      "discriminator": [
+        138,
+        172,
+        103,
+        228,
+        254,
+        96,
+        114,
+        178
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "owner_withdraw_token",
+      "discriminator": [
+        113,
+        80,
+        101,
+        84,
+        80,
+        135,
+        215,
+        156
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "vault_token",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "vault"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "owner_token",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Vault",
+      "discriminator": [
+        211,
+        8,
+        232,
+        43,
+        2,
+        152,
+        117,
+        119
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "BadTiming",
+      "msg": "Bad timing values"
+    },
+    {
+      "code": 6001,
+      "name": "BadBeneficiaries",
+      "msg": "1 or 2 beneficiaries required"
+    },
+    {
+      "code": 6002,
+      "name": "BadShares",
+      "msg": "Shares must be > 0 and total 10000 bps"
+    },
+    {
+      "code": 6003,
+      "name": "Locked",
+      "msg": "Vault is locked"
+    },
+    {
+      "code": 6004,
+      "name": "NotGuardian",
+      "msg": "Not the guardian"
+    },
+    {
+      "code": 6005,
+      "name": "TooEarly",
+      "msg": "Too early"
+    },
+    {
+      "code": 6006,
+      "name": "NotClaimable",
+      "msg": "Vault not claimable yet"
+    },
+    {
+      "code": 6007,
+      "name": "GuardianPending",
+      "msg": "Guardian approval pending"
+    },
+    {
+      "code": 6008,
+      "name": "NotBeneficiary",
+      "msg": "Not a beneficiary"
+    },
+    {
+      "code": 6009,
+      "name": "AlreadyClaimed",
+      "msg": "Already claimed"
+    },
+    {
+      "code": 6010,
+      "name": "Insufficient",
+      "msg": "Insufficient funds"
+    },
+    {
+      "code": 6011,
+      "name": "DuplicateKey",
+      "msg": "Beneficiary keys must differ"
+    },
+    {
+      "code": 6012,
+      "name": "BadGuardian",
+      "msg": "Guardian cannot be the owner"
+    },
+    {
+      "code": 6013,
+      "name": "BadDestination",
+      "msg": "Invalid destination"
+    },
+    {
+      "code": 6014,
+      "name": "TokenAccountsMissing",
+      "msg": "Token accounts missing"
+    },
+    {
+      "code": 6015,
+      "name": "BadTokenAccount",
+      "msg": "Invalid token account"
+    }
+  ],
+  "types": [
+    {
+      "name": "Beneficiary",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "claim_key",
+            "type": "pubkey"
+          },
+          {
+            "name": "share_bps",
+            "type": "u16"
+          },
+          {
+            "name": "claimed",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BeneficiaryInput",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "claim_key",
+            "type": "pubkey"
+          },
+          {
+            "name": "share_bps",
+            "type": "u16"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Vault",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "last_check_in",
+            "type": "i64"
+          },
+          {
+            "name": "interval",
+            "type": "i64"
+          },
+          {
+            "name": "grace",
+            "type": "i64"
+          },
+          {
+            "name": "guardian",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "guardian_timeout",
+            "type": "i64"
+          },
+          {
+            "name": "guardian_approved",
+            "type": "bool"
+          },
+          {
+            "name": "locked",
+            "type": "bool"
+          },
+          {
+            "name": "snapshot_lamports",
+            "type": "u64"
+          },
+          {
+            "name": "mint",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "token_snapshot",
+            "type": "u64"
+          },
+          {
+            "name": "count",
+            "type": "u8"
+          },
+          {
+            "name": "beneficiaries",
+            "type": {
+              "array": [
+                {
+                  "defined": {
+                    "name": "Beneficiary"
+                  }
+                },
+                2
+              ]
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}

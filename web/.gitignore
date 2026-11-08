@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+.vercel
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+
+# secrets: never commit
+.env
+.env.*
+!.env.example
+*keypair*.json
+relayer*.json
+id.json
+*.pem
