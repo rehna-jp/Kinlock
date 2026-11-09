@@ -5,7 +5,7 @@
 > **Devnet demo. Unaudited. Never use real funds.**
 
 - **Live app:** [https://web-eta-seven-y6r4siobrz.vercel.app](https://web-eta-seven-y6r4siobrz.vercel.app/)
-- **Demo video:** `<YOUR-VIDEO-URL>`
+- **Demo video:** [https://youtu.be/h2ISszVDD_M](https://youtu.be/h2ISszVDD_M)
 - **Program (devnet):** [`DnuvWPjfZhLE3mtFkM9frcpmhAYnfhnfarJTTvj6wDeD`](https://explorer.solana.com/address/DnuvWPjfZhLE3mtFkM9frcpmhAYnfhnfarJTTvj6wDeD?cluster=devnet)
 
 ## The problem
@@ -150,7 +150,7 @@ End-to-end (manual): create a vault with the demo timers, miss a check-in, confi
 ```sql
 select cron.schedule('kinlock-watcher', '* * * * *', $$
   select net.http_post(
-    url := 'https://YOUR-APP.vercel.app/api/watcher',
+    url := 'https://web-eta-seven-y6r4siobrz.vercel.app/api/watcher',
     headers := jsonb_build_object('Authorization', 'Bearer YOUR_CRON_SECRET', 'Content-Type', 'application/json')
   ) $$);
 ```
